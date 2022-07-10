@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Rasterized Scene</h1>
+        <div>
+            <canvas id="canvas" style="border: 1px grey solid"></canvas>
+        </div>
+
+        <script type="module">
+            import { CanvasWrap } from "./canvas-wrap.js";
+            import { Point } from "./point.js";
+
+            var canvas = document.getElementById("canvas");
+            canvas.width = 500;
+            canvas.height = 500;
+
+            var wrap = new CanvasWrap(canvas.width, canvas.height);
+
+            wrap.newBuffer();
+
+            //wrap.drawLine(new Point(0, 0), new Point(100, 0));
+            //wrap.drawLine(new Point(0, 0), new Point(-100, 0));
+
+            wrap.putPixel(0, 0);
+            wrap.putPixel(-100, 0);
+            wrap.putPixel(100, 0);
+            wrap.putPixel(0, 100);
+            wrap.putPixel(0, -100);
+
+            wrap.drawLine(new Point(-200, -100), new Point(240, 120));
+            wrap.drawLine(new Point(-50, -200), new Point(60, 240));
+
+            wrap.drawBuffer(canvas.getContext("2d"));
+
+        </script>
+    </body>
+</html>
