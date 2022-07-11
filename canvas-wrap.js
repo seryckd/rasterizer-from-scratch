@@ -27,19 +27,64 @@ export class CanvasWrap {
             0, 0);
     }
 
-    drawLine(p0, p1) {
-        if (p0.x > p1.x) {
-            var tmp = p1;
-            p1 = p0;
-            p0 = tmp;
+    /**
+     * independent variables are always integers
+     * dependent values are always floats
+     * 
+     * @param {*} i0 independent variable start
+     * @param {*} d0 dependent variable start
+     * @param {*} i1 independent variable end
+     * @param {*} d1 dependent variable start
+     * @return {Array[float]} array of calculated values between d0 and d1
+     */
+    interpolate(i0, d0, i1, d1) {
+
+        if (i0 == i1) {
+            return [ d0 ];
         }
 
-        const a = (p1.y-p0.y) / (p1.x-p0.x);
-        var y = p0.y;
+        var values = [];
 
-        for(let x=p0.x; x<p1.x; x++) {
-           this.putPixel(x, y);
-           y = y + a;
+        const a = (d1 - d0) / (i1 - i0);
+        var d = d0;
+
+        for (let i=i0; i<i1; i++) {
+            values.push(d);
+            d = d + a;
+        }
+
+        return values;
+    }
+
+    drawLine(p0, p1) {
+        if (Math.abs(p1.x - p0.x) > Math.abs(p1.y - p0.y)) {
+            // Line is horizontal-ish
+            if (p0.x > p1.x) {
+                let tmp = p1;
+                p1 = p0;
+                p0 = tmp;
+            }
+
+            var yvals = this.interpolate(p0.x, p0.y, p1.x, p1.y);
+
+            for (let x=p0.x; x<p1.x; x++) {
+                this.putPixel(x, yvals[x-p0.x]);
+            }
+
+        } else {
+            // Line is vertical-ish
+            if (p0.y > p1.y) {
+                let tmp = p1;
+                p1 = p0;
+                p0 = tmp;
+            }
+
+            var xvals = this.interpolate(p0.y, p0.x, p1.y, p1.x);
+
+            for (let y=p0.y; y<p1.y; y++) {
+                this.putPixel(xvals[y-p0.y], y);
+            }
+
         }
     }
 
